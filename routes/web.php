@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
 Route::group(['middleware'=>['auth']],function(){
     Route::get('/patients',[PatientController::class,'allPatient'])->name('all.patient');
+    Route::post('/save',[PatientController::class,'savePatient'])->name('patient.save');
 });
 
 require __DIR__.'/auth.php';
