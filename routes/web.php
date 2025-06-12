@@ -21,6 +21,9 @@ Route::middleware('auth')->group(function () {
 Route::group(['middleware'=>['auth']],function(){
     Route::get('/patients',[PatientController::class,'allPatient'])->name('all.patient');
     Route::post('/save',[PatientController::class,'savePatient'])->name('patient.save');
+    Route::post('/patients/{id}',[PatientController::class,'deletePatient'])->name('delete.patient');
+    Route::get('/patient/{id}',[PatientController::class,'getPatient'])->name('get.patient');
+    Route::put('patients-update/{id}',[PatientController::class,'patientUpdate'])->name('update.patient');
 });
 
 require __DIR__.'/auth.php';

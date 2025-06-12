@@ -23,47 +23,18 @@
         <div class="card-body">
             <h5 class="card-title mb-4">Patient Records</h5>
             <div class="table-responsive">
-                <table class="table table-hover table-striped">
+                <table class="table table-hover table-striped" id="patients-table">
                     <thead>
                         <tr>
-                            <th>Patient ID</th>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Age</th>
                             <th>Gender</th>
                             <th>Phone</th>
-                            <th>Last Visit</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>PAT001</td>
-                            <td>Mary Johnson</td>
-                            <td>34</td>
-                            <td>Female</td>
-                            <td>(555) 123-4567</td>
-                            <td>2025-06-07</td>
-                            <td><button class="btn btn-sm btn-primary">View</button></td>
-                        </tr>
-                        <tr>
-                            <td>PAT002</td>
-                            <td>Daniel Smith</td>
-                            <td>42</td>
-                            <td>Male</td>
-                            <td>(555) 765-4321</td>
-                            <td>2025-06-06</td>
-                            <td><button class="btn btn-sm btn-primary">View</button></td>
-                        </tr>
-                        <tr>
-                            <td>PAT003</td>
-                            <td>Susan Lee</td>
-                            <td>28</td>
-                            <td>Female</td>
-                            <td>(555) 987-6543</td>
-                            <td>2025-06-04</td>
-                            <td><button class="btn btn-sm btn-primary">View</button></td>
-                        </tr>
-                    </tbody>
+
                 </table>
             </div>
         </div>
@@ -81,6 +52,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="patient_id" id="patient_id">
                     <div class="mb-3">
                         <label for="name" class="form-label">Full Name</label>
                         <input type="text" class="form-control" id="name" name="name">
@@ -119,33 +91,130 @@
 @endsection
 
 @section('scripts')
+
 <script>
 $(document).ready(function () {
-    $('#addPatientForm').on('submit', function (e) {
-        e.preventDefault();
-
-        const form = $(this);
-        const url = form.attr('action');
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: form.serialize(),
-            dataType: 'json',
-            success: function (response) {
-                $('#addPatientModal').modal('hide');
-                notyf.success(response.message);
+    const patientTable = $('#patients-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route("all.patient") }}',
+        columns: [
+            {
+            data: null,
+            name: 'index',
+            render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             },
-            error: function (xhr,status,error) {
-                let errors = xhr.responseJSON.errors;
-                $.each(errors,function(index,value){
-                    notyf.error(value[0]);
-                })
-}
-        });
+            orderable: false,
+            searchable: false
+        },
+            { data: 'name', name: 'name' },
+            { data: 'age', name: 'age' },
+            { data: 'gender', name: 'gender' },
+            { data: 'contact', name: 'contact' },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false },
+        ]
+    });
+
+    $('#addPatientForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const form = $(this);
+    const formData = form.serialize();
+    const patientId = $('#patient_id').val();
+    const isUpdate = patientId !== '';
+
+    const url = isUpdate ? `/patients-update/${patientId}` : form.attr('action');
+    const method = isUpdate ? 'PUT' : 'POST';
+
+    $.ajax({
+        url: url,
+        type: method,
+        data: formData,
+        success: function (response) {
+            $('#addPatientModal').modal('hide');
+            notyf.success(response.message);
+
+            // Reset modal and form
+            form[0].reset();
+            $('#patient_id').val('');
+            $('#addPatientModalLabel').text('Add New Patient');
+            $('#addPatientForm button[type=submit]').text('Add Patient');
+
+            // Reload DataTable
+            patientTable.ajax.reload(null, false);
+        },
+        error: function (xhr) {
+            let errors = xhr.responseJSON.errors;
+            $.each(errors, function (index, value) {
+                notyf.error(value[0]);
+            });
+        }
     });
 });
+
+});
+
+$('#addPatientModal').on('hidden.bs.modal', function () {
+    const form = $('#addPatientForm');
+
+    form[0].reset();
+
+    $('#patient_id').val('');
+
+    $('#addPatientModalLabel').text('Add New Patient');
+    $('#addPatientForm button[type=submit]').text('Add Patient');
+});
+
+
+
+
+
+$(document).on('click', '.delete-patient', function () {
+    const patientId = $(this).data('id');
+
+    if (confirm('Are you sure you want to delete this patient?')) {
+        $.ajax({
+            url: `/patients/${patientId}`,
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                notyf.success(response.message);
+                $('#patients-table').DataTable().ajax.reload(null, false);
+            },
+            error: function(xhr) {
+                notyf.error('Failed to delete patient.');
+            }
+        });
+    }
+});
+
+$(document).on('click', '.edit-patient', function () {
+    const id = $(this).data('id');
+    $.get(`/patient/${id}`, function (patient) {
+
+        $('#patient_id').val(patient.id);
+        $('#name').val(patient.name);
+        $('#age').val(patient.age);
+        $('#gender').val(patient.gender);
+        $('#phone').val(patient.contact);
+        $('#address').val(patient.address);
+
+        // Update modal title and button
+        $('#addPatientModalLabel').text('Update Patient');
+        $('#addPatientForm button[type=submit]').text('Update Patient');
+
+        // Show modal
+        $('#addPatientModal').modal('show');
+    });
+});
+
+
 </script>
+
+
 @endsection
 
 
