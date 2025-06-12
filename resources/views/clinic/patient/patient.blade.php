@@ -157,14 +157,15 @@ $(document).ready(function () {
 
 $('#addPatientModal').on('hidden.bs.modal', function () {
     const form = $('#addPatientForm');
-
     form[0].reset();
 
-    $('#patient_id').val('');
+    $('#addPatientForm input, #addPatientForm select, #addPatientForm textarea').prop('disabled', false);
 
+    $('#patient_id').val('');
     $('#addPatientModalLabel').text('Add New Patient');
-    $('#addPatientForm button[type=submit]').text('Add Patient');
+    $('#addPatientForm button[type=submit]').text('Add Patient').show();
 });
+
 
 
 
@@ -190,6 +191,31 @@ $(document).on('click', '.delete-patient', function () {
         });
     }
 });
+
+
+$(document).on('click', '.view-patient', function () {
+    const id = $(this).data('id');
+
+    $.ajax({
+        url: `/patient/${id}`,
+        type: 'GET',
+        success: function (data) {
+            // Fill modal with data
+            $('#patient_id').val(data.id);
+            $('#name').val(data.name).prop('disabled', true);
+            $('#age').val(data.age).prop('disabled', true);
+            $('#gender').val(data.gender).prop('disabled', true);
+            $('#phone').val(data.contact).prop('disabled', true);
+            $('#address').val(data.address).prop('disabled', true);
+
+
+            $('#addPatientModalLabel').text('View Patient');
+            $('#addPatientForm button[type=submit]').hide();
+            $('#addPatientModal').modal('show');
+        }
+    });
+});
+
 
 $(document).on('click', '.edit-patient', function () {
     const id = $(this).data('id');
