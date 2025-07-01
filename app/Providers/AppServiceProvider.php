@@ -2,21 +2,21 @@
 
 namespace App\Providers;
 
+use App\Interfaces\DepartmentInterface;
+use App\Interfaces\PatientInterface;
+use App\Repositories\DepartmentRepository;
+use App\Repositories\PatientRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+
     public function register(): void
     {
-        //
+        $this->app->bind(PatientInterface::class,PatientRepository::class);
+        $this->app->bind(DepartmentInterface::class,DepartmentRepository::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //
