@@ -6,17 +6,12 @@
 <main class="col-md-12 ms-sm-auto col-lg-10 content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4">
         <h1 class="h3">Patients</h1>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPatientModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">
   Add New Patient
 </button>
 
     </div>
 
-    <!-- Search -->
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search patients..." />
-        <button class="btn btn-outline-secondary" type="button">Search</button>
-    </div>
 
     <!-- Patients Table -->
     <div class="card">
@@ -74,14 +69,14 @@
                         <input type="number" class="form-control" id="phone" name="phone" >
                     </div>
                     <div class="mb-3">
-    <label for="address" class="form-label">Address</label>
-    <textarea class="form-control" id="address" name="address" rows="3"></textarea>
-</div>
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                    </div>
                 </div>
                <div class="modal-footer">
-    <button type="submit" class="btn btn-primary">Add Patient</button>
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-</div>
+                    <button type="submit" class="btn btn-primary">Add Patient</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
 
             </div>
         </form>
