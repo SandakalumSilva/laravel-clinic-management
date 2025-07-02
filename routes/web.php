@@ -30,6 +30,9 @@ Route::group(['middleware'=>['auth']],function(){
 Route::group(['middleware'=>['auth']],function(){
     Route::get('/departments',[DepartmentController::class,'allDepartments'])->name('all.departments');
     Route::post('/save-department',[DepartmentController::class,'saveDepartment'])->name('department.save');
+    Route::get('/department/{id}',[DepartmentController::class,'getDepartment'])->name('get.department');
+    Route::put('department-update/{id}',[DepartmentController::class,'updateDepartment'])->name('update.department');
+    Route::post('/department/{id}',[DepartmentController::class,'deleteDepartment'])->name('delete.department');
 });
 
 require __DIR__.'/auth.php';
