@@ -36,7 +36,7 @@ class PatientRepository implements PatientInterface{
         $patient = Patient::create([
             'name' => $request->name,
             'age' => $request->age,
-            'contact' => $request->phone,
+            'contact' => $request->contact,
             'gender' => $request->gender,
             'address' => $request->address
         ]);
@@ -65,7 +65,7 @@ class PatientRepository implements PatientInterface{
         'name' => $request->name,
         'age' => $request->age,
         'gender' => $request->gender,
-        'contact' => $request->phone,
+        'contact' => $request->contact,
         'address' => $request->address,
     ]);
 

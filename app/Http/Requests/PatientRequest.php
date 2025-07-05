@@ -23,10 +23,10 @@ class PatientRequest extends FormRequest
     {
         return [
             'name'    => ['required', 'string', 'max:255'],
-    'age'     => ['required', 'integer', 'min:0', 'max:120'],
-    'gender'  => ['required', 'in:male,female'],
-    'phone'   => ['required', 'numeric', 'digits:10'],
-    'address' => ['required', 'string', 'max:500'],
+            'age'     => ['required', 'integer', 'min:0', 'max:120'],
+            'gender'  => ['required', 'in:male,female'],
+            'contact'   => ['required', 'numeric', 'digits:10'],
+            'address' => ['required', 'string', 'max:500'],
         ];
     }
 }

@@ -14,10 +14,12 @@
 
 </head>
 <body>
+    <!-- Mobile Navbar with Burger Icon -->
+    @include('clinic.layouts.sidebar-mobile')
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-      @include('clinic.layouts.sidebar')
+      @include('clinic.layouts.sidebar-desktop')
 
       <!-- Main Content -->
 

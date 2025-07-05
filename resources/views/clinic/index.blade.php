@@ -7,10 +7,32 @@
 <main class="col-md-12 ms-sm-auto col-lg-10 content">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4">
     <h1 class="h3">Dashboard</h1>
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="btn btn-primary">Log Out</button>
-    </form>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        Log Out
+    </button>
+  </div>
+
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-white text-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to log out?
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button  type="submit" class="btn btn-danger">
+                    Yes, Log Out
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
   </div>
 
   <!-- Dashboard Cards -->
