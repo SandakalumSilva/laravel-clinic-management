@@ -66,7 +66,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="number" class="form-control" id="phone" name="phone" >
+                        <input type="text" id="contact" name="contact" class="form-control">
+
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address</label>
@@ -199,8 +200,8 @@ $(document).on('click', '.view-patient', function () {
             $('#patient_id').val(data.id);
             $('#name').val(data.name).prop('disabled', true);
             $('#age').val(data.age).prop('disabled', true);
-            $('#gender').val(data.gender).prop('disabled', true);
-            $('#phone').val(data.contact).prop('disabled', true);
+            $('#gender').val((data.gender || '').toLowerCase()).prop('disabled', true);
+            $('#contact').val(data.contact).prop('disabled', true);
             $('#address').val(data.address).prop('disabled', true);
 
 
@@ -219,8 +220,8 @@ $(document).on('click', '.edit-patient', function () {
         $('#patient_id').val(patient.id);
         $('#name').val(patient.name);
         $('#age').val(patient.age);
-        $('#gender').val(patient.gender);
-        $('#phone').val(patient.contact);
+        $('#gender').val((patient.gender || '').toLowerCase());
+        $('#contact').val(patient.contact);
         $('#address').val(patient.address);
 
         // Update modal title and button
