@@ -19,10 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id');
             $table->string('specialization')->nullable();
             $table->timestamps();
-
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('restrict');
         });
-
     }
 
     /**
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('docotors');
+        Schema::dropIfExists('doctors');
     }
 };
