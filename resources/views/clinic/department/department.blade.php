@@ -82,7 +82,7 @@
             { data: 'name', name: 'name' },
             { data: 'actions', name: 'actions', orderable: false, searchable: false },
         ]
-    });
+        });
 
         $('#addDepartmentForm').on('submit', function (e) {
             e.preventDefault();

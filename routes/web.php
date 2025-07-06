@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DoctorController;
+use PhpParser\Comment\Doc;
 
 Route::get('/', function () {
     return view('clinic.login.login');
@@ -33,6 +35,14 @@ Route::group(['middleware'=>['auth']],function(){
     Route::get('/department/{id}',[DepartmentController::class,'getDepartment'])->name('get.department');
     Route::put('department-update/{id}',[DepartmentController::class,'updateDepartment'])->name('update.department');
     Route::post('/department/{id}',[DepartmentController::class,'deleteDepartment'])->name('delete.department');
+});
+
+Route::group(['middleware'=>['auth']],function(){
+    Route::get('/doctors',[DoctorController::class,'allDoctors'])->name('all.doctors');
+    // Route::post('/save-doctor',[DoctorController::class,'saveDoctor'])->name('doctor.save');
+    // Route::get('/doctor/{id}',[DoctorController::class,'getDoctor'])->name('get.doctor');
+    // Route::put('doctor-update/{id}',[DoctorController::class,'updateDoctor'])->name('update.doctor');
+    // Route::post('/doctor/{id}',[DoctorController::class,'deleteDoctor'])->name('delete.doctor');
 });
 
 require __DIR__.'/auth.php';
