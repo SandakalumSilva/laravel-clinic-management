@@ -31,6 +31,7 @@ Route::group(['middleware'=>['auth']],function(){
 
 Route::group(['middleware'=>['auth']],function(){
     Route::get('/departments',[DepartmentController::class,'allDepartments'])->name('all.departments');
+    Route::get('/department',[DepartmentController::class,'department'])->name('department');
     Route::post('/save-department',[DepartmentController::class,'saveDepartment'])->name('department.save');
     Route::get('/department/{id}',[DepartmentController::class,'getDepartment'])->name('get.department');
     Route::put('department-update/{id}',[DepartmentController::class,'updateDepartment'])->name('update.department');
@@ -39,8 +40,8 @@ Route::group(['middleware'=>['auth']],function(){
 
 Route::group(['middleware'=>['auth']],function(){
     Route::get('/doctors',[DoctorController::class,'allDoctors'])->name('all.doctors');
-    // Route::post('/save-doctor',[DoctorController::class,'saveDoctor'])->name('doctor.save');
-    // Route::get('/doctor/{id}',[DoctorController::class,'getDoctor'])->name('get.doctor');
+    Route::post('/save-doctor',[DoctorController::class,'saveDoctor'])->name('doctor.save');
+    Route::get('/doctor/{id}',[DoctorController::class,'getDoctor'])->name('get.doctor');
     // Route::put('doctor-update/{id}',[DoctorController::class,'updateDoctor'])->name('update.doctor');
     // Route::post('/doctor/{id}',[DoctorController::class,'deleteDoctor'])->name('delete.doctor');
 });

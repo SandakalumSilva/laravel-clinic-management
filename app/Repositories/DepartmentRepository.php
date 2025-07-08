@@ -30,6 +30,13 @@ class DepartmentRepository implements DepartmentInterface
         return view('clinic.department.department');
     }
 
+    public function department()
+    {
+        $departments = Department::all();
+
+        return response()->json($departments);
+    }
+
     public function saveDepartment($request)
     {
         $department = new Department();

@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'email' => 'admin@clinic.com',
                 'password' => Hash::make('abc123'),
                 'email_verified_at' => now(),
+                'role' => 'admin',
             ]
         );
     }

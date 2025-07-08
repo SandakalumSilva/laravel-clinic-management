@@ -20,6 +20,11 @@ class DepartmentController extends Controller
         return $this->departmentRepository->allDepartments($request);
     }
 
+    public function department()
+    {
+        return $this->departmentRepository->department();
+    }
+
     public function saveDepartment(DepartmentRequest $request)
     {
         return $this->departmentRepository->saveDepartment($request);

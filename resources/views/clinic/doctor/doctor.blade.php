@@ -6,7 +6,7 @@
 <main class="col-md-12 ms-sm-auto col-lg-10 content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4">
         <h1 class="h3">Doctors</h1>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDoctorModal">
             Add New Doctor
         </button>
     </div>
@@ -34,6 +34,91 @@
     </div>
 </main>
 
+<!-- Add Doctor Modal -->
+<div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addDoctorForm" method="POST" action="{{ route('doctor.save') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDoctorModalLabel">Add New Doctor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="doctor_id" id="doctor_id" hidden>
+                    <div class="mb-3">
+                        <label for="doctor_name" class="form-label">Doctor Name</label>
+                        <input type="text" class="form-control" id="doctor_name" name="name" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="doctor_email" class="form-label">Doctor Email</label>
+                        <input type="email" class="form-control" id="doctor_email" name="email" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="specialization" class="form-label">Specialization</label>
+                        <input type="text" class="form-control" id="specialization" name="specialization" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" >
+                    </div>
+                   <div class="mb-3">
+                        <label for="department_id" class="form-label">Department</label>
+                        <select class="form-select" id="department_id" name="department" >
+                            <option value="">Select Department</option>
+                            <!-- Departments will be populated here via AJAX -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add Doctor</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- View Doctor Modal -->
+<div class="modal fade" id="viewDoctorModal" tabindex="-1" aria-labelledby="viewDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDoctorModalLabel">View Doctor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="view_doctor_name" class="form-label">Doctor Name</label>
+                    <input type="text" class="form-control" id="view_doctor_name" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="view_doctor_email" class="form-label">Doctor Email</label>
+                    <input type="email" class="form-control" id="view_doctor_email" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="view_specialization" class="form-label">Specialization</label>
+                    <input type="text" class="form-control" id="view_specialization" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="view_phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="view_phone" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="view_department_id" class="form-label">Department</label>
+                    <input type="text" class="form-control" id="view_department_id" disabled>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 @endsection
 
 @section('scripts')
@@ -60,8 +145,89 @@
         ]
         });
 
+        $('#addDoctorForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const formData = form.serialize();
+
+
+            const url =  form.attr('action');
+            const method = 'POST';
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                success: function (response) {
+                    $('#addDoctorModal').modal('hide');
+                    notyf.success(response.message);
+
+                    form[0].reset();
+
+                    // Reload DataTable
+                    doctorTable.ajax.reload(null, false);
+
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    $.each(errors, function (index, value) {
+                        notyf.error(value[0]);
+                    });
+                }
+            });
+        });
+
     });
 
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '{{ route("department") }}',
+            method: 'GET',
+            success: function(data) {
+                $('#department_id').empty();
+
+                $('#department_id').append('<option value="">Select Department</option>');
+
+                $.each(data, function(index, department) {
+                    $('#department_id').append('<option value="' + department.id + '">' + department.name + '</option>');
+                });
+
+                // $('#department_id').select2({
+                //     placeholder: "Select Department", // Placeholder text
+                //     allowClear: true // Enable the option to clear the selection
+                // });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching departments:", error);
+            }
+        });
+    });
+
+    $(document).on('click', '.view-doctor', function () {
+        const id = $(this).data('id');
+
+
+        $.ajax({
+            url: `/doctor/${id}`,
+            type: 'GET',
+            success: function (data) {
+                // console.log(data);
+                $('#view_doctor_name').val(data.name);
+                $('#view_doctor_email').val(data.email);
+                $('#view_specialization').val(data.specialization);
+                $('#view_phone').val(data.phone);
+                $('#view_department_id').val(data.department_name);
+
+                // Show the view doctor modal
+                $('#viewDoctorModal').modal('show');
+            }
+        });
+    });
 </script>
 
 @endsection
