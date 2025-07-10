@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories;
+
 use App\Interfaces\DoctorInterface;
 use App\Mail\SendPasswordEmail;
 use App\Models\Department;
@@ -11,22 +13,23 @@ use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendPasswordJob;
 
-class DoctorRepository implements DoctorInterface{
+class DoctorRepository implements DoctorInterface
+{
     public function allDoctors($request)
     {
         if ($request->ajax()) {
             $data = Doctor::select([
-                        'doctors.id',
-                        'doctors.name',
-                        'doctors.specialization',
-                        'doctors.phone',
-                        'departments.name as department_name'
-                    ])
-                    ->join('departments', 'departments.id', '=', 'doctors.department_id')
-                    ->orderBy('doctors.id', 'desc');
+                'doctors.id',
+                'doctors.name',
+                'doctors.specialization',
+                'doctors.phone',
+                'departments.name as department_name'
+            ])
+                ->join('departments', 'departments.id', '=', 'doctors.department_id')
+                ->orderBy('doctors.id', 'desc');
 
             return DataTables::of($data)
-                ->addColumn('actions', function($row){
+                ->addColumn('actions', function ($row) {
                     return '
                         <button class="btn btn-sm btn-primary view-doctor" title="View" data-id="' . $row->id . '">
                             <i class="fas fa-eye"></i>
@@ -43,6 +46,14 @@ class DoctorRepository implements DoctorInterface{
                 ->make(true);
         }
         return view('clinic.doctor.doctor');
+    }
+
+    public function getAlldoctors()
+    {
+        $doctors = Doctor::all();
+        return response()->json(
+            $doctors
+        );
     }
     public function saveDoctor($request)
     {
@@ -71,25 +82,46 @@ class DoctorRepository implements DoctorInterface{
         SendPasswordJob::dispatch($user, $generatedPassword);
 
 
-         return response()->json([
-        'message' => 'Doctor saved successfully.',
-        'data' => $doctor
+        return response()->json([
+            'message' => 'Doctor saved successfully.',
+            'data' => $doctor
         ]);
     }
 
     public function getDoctor($id)
     {
         $doctor = Doctor::select([
-                        'doctors.id',
-                        'doctors.name',
-                        'doctors.specialization',
-                        'doctors.phone',
-                        'doctors.email',
-                        'departments.name as department_name'
-                    ])
-                    ->join('departments', 'departments.id', '=', 'doctors.department_id')
-                    ->where('doctors.id', $id)
-                    ->first();
+            'doctors.id',
+            'doctors.name',
+            'doctors.specialization',
+            'doctors.phone',
+            'doctors.email',
+            'doctors.department_id',
+            'departments.name as department_name'
+        ])
+            ->join('departments', 'departments.id', '=', 'doctors.department_id')
+            ->where('doctors.id', $id)
+            ->first();
         return response()->json($doctor);
+    }
+
+    public function updateDoctor($request, $id)
+    {
+        $doctor = Doctor::findOrFail($id);
+        $doctor->update([
+            'name' => $request->name,
+            'specialization' => $request->specialization,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'department_id' => $request->department,
+        ]);
+
+        return response()->json(['message' => 'Doctor updated successfully.']);
+    }
+
+    public function deleteDoctor($id)
+    {
+        Doctor::findOrFail($id)->delete();
+        return response()->json(['message' => 'Doctor deleted successfully.']);
     }
 }
