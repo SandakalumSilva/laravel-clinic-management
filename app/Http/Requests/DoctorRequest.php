@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DoctorRequest extends FormRequest
 {
@@ -23,7 +24,8 @@ class DoctorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:doctors,email', 'max:255'],
+            'email' => ['required', 'email', 'max:255',
+               Rule::unique('doctors', 'email')->ignore($this->route('id')),],
             'specialization' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:15'],
             'department' => ['required', 'exists:departments,id'],
