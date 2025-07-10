@@ -6,6 +6,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\StaffController;
 use PhpParser\Comment\Doc;
 
 Route::get('/', function () {
@@ -20,6 +21,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// All staff routes
+Route::middleware('auth')->group(function () {
+    Route::get('/all-staff', [StaffController::class, 'allStaff'])->name('all.staff');
+    Route::post('/save-staff', [StaffController::class, 'saveStaff'])->name('staff.save');
 });
 
 Route::group(['middleware' => ['auth']], function () {
